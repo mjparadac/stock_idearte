@@ -1,134 +1,303 @@
-create database inventiolite;
-use inventiolite;
-set sql_mode='';
+-- Host: localhost    Database: swasp_stocklite
+-- ------------------------------------------------------
+-- Server version	5.6.43-log
 
-create table user(
-	id int not null auto_increment primary key,
-	name varchar(50),
-	lastname varchar(50),
-	username varchar(50),
-	email varchar(255),
-	password varchar(60),
-	image varchar(255),
-	is_active boolean not null default 1,
-	is_admin boolean not null default 0,
-	created_at datetime
-);
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-insert into user(name,lastname,email,password,is_active,is_admin,created_at) value ("Administrador", "","admin","90b9aa7e25f80cf4f64e990b78a9fc5ebd6cecad",1,1,NOW());
+--
+-- Table structure for table `box`
+--
 
-create table category(
-	id int not null auto_increment primary key,
-	image varchar(255),
-	name varchar(50),
-	description text,
-	created_at datetime
-);
+DROP TABLE IF EXISTS `box`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `box` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `created_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-create table product(
-	id int not null auto_increment primary key,
-	image varchar(255),
-	barcode varchar(50),
-	name varchar(50),
-	description text,
-	inventary_min int default 10,
-	price_in float,
-	price_out float,
-	unit varchar(255),
-	presentation varchar(255),
-	user_id int,
-	category_id int,
-	created_at datetime,
-	is_active boolean default 1,
-	foreign key (category_id) references category(id),
-	foreign key (user_id) references user(id)
-);
+--
+-- Dumping data for table `box`
+--
 
-/*
-person kind
-1.- Client
-2.- Provider
-*/
-create table person(
-	id int not null auto_increment primary key,
-	image varchar(255),
-	name varchar(255),
-	lastname varchar(50),
-	company varchar(50),
-	address1 varchar(50),
-	address2 varchar(50),
-	phone1 varchar(50),
-	phone2 varchar(50),
-	email1 varchar(50),
-	email2 varchar(50),
-	kind int,
-	created_at datetime
-);
+LOCK TABLES `box` WRITE;
+/*!40000 ALTER TABLE `box` DISABLE KEYS */;
+/*!40000 ALTER TABLE `box` ENABLE KEYS */;
+UNLOCK TABLES;
 
+--
+-- Table structure for table `category`
+--
 
-create table operation_type(
-	id int not null auto_increment primary key,
-	name varchar(50)
-);
+DROP TABLE IF EXISTS `category`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `category` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `image` varchar(255) DEFAULT NULL,
+  `name` varchar(50) DEFAULT NULL,
+  `description` text,
+  `created_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-insert into operation_type (name) value ("entrada");
-insert into operation_type (name) value ("salida");
+--
+-- Dumping data for table `category`
+--
 
-create table box(
-	id int not null auto_increment primary key,
-	created_at datetime
-);
+LOCK TABLES `category` WRITE;
+/*!40000 ALTER TABLE `category` DISABLE KEYS */;
+INSERT INTO `category` VALUES (1,NULL,'SUBLIMACION',NULL,'2021-01-21 16:34:07'),(2,NULL,'CAMISAS',NULL,'2021-01-22 16:41:52');
+/*!40000 ALTER TABLE `category` ENABLE KEYS */;
+UNLOCK TABLES;
 
+--
+-- Table structure for table `configuration`
+--
 
-create table sell(
-	id int not null auto_increment primary key,
-	person_id int ,
-	user_id int ,
-	operation_type_id int default 2,
-	box_id int,
+DROP TABLE IF EXISTS `configuration`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `configuration` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `short` varchar(255) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `kind` int(11) DEFAULT NULL,
+  `val` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `short` (`short`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-	total double,
-	cash double,
-	discount double,
+--
+-- Dumping data for table `configuration`
+--
 
-	foreign key (box_id) references box(id),
-	foreign key (operation_type_id) references operation_type(id),
-	foreign key (user_id) references user(id),
-	foreign key (person_id) references person(id),
-	created_at datetime
-);
+LOCK TABLES `configuration` WRITE;
+/*!40000 ALTER TABLE `configuration` DISABLE KEYS */;
+INSERT INTO `configuration` VALUES (1,'title','Titulo del Sistema',2,'Inventario - Idearte'),(2,'use_image_product','Utilizar Imagenes en los productos',1,'0'),(3,'active_clients','Activar clientes',1,'0'),(4,'active_providers','Activar proveedores',1,'0'),(5,'active_categories','Activar categorias',1,'0'),(6,'active_reports_word','Activar reportes en Word',1,'0'),(7,'active_reports_excel','Activar reportes en Excel',1,'0'),(8,'active_reports_pdf','Activar reportes en PDF',1,'0');
+/*!40000 ALTER TABLE `configuration` ENABLE KEYS */;
+UNLOCK TABLES;
 
-create table operation(
-	id int not null auto_increment primary key,
-	product_id int,
-	q float,
-	operation_type_id int,
-	sell_id int,
-	created_at datetime,
-	foreign key (product_id) references product(id),
-	foreign key (operation_type_id) references operation_type(id),
-	foreign key (sell_id) references sell(id)
-);
+--
+-- Table structure for table `operation`
+--
 
-/*
-configuration kind
-1.- Boolean
-2.- Text
-3.- Number
-*/
-create table configuration(
-	id int not null auto_increment primary key,
-	short varchar(255) unique,
-	name varchar(255) unique,
-	kind int,
-	val varchar(255)
-);
-insert into configuration(short,name,kind,val) value("title","Titulo del Sistema",2,"Inventio Lite");
-insert into configuration(short,name,kind,val) value("use_image_product","Utilizar Imagenes en los productos",1,0);
-insert into configuration(short,name,kind,val) value("active_clients","Activar clientes",1,0);
-insert into configuration(short,name,kind,val) value("active_providers","Activar proveedores",1,0);
-insert into configuration(short,name,kind,val) value("active_categories","Activar categorias",1,0);
-insert into configuration(short,name,kind,val) value("active_reports_word","Activar reportes en Word",1,0);
-insert into configuration(short,name,kind,val) value("active_reports_excel","Activar reportes en Excel",1,0);
-insert into configuration(short,name,kind,val) value("active_reports_pdf","Activar reportes en PDF",1,0);
+DROP TABLE IF EXISTS `operation`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `operation` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `product_id` int(11) DEFAULT NULL,
+  `q` float DEFAULT NULL,
+  `operation_type_id` int(11) DEFAULT NULL,
+  `sell_id` int(11) DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `product_id` (`product_id`),
+  KEY `operation_type_id` (`operation_type_id`),
+  KEY `sell_id` (`sell_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=99 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `operation`
+--
+
+LOCK TABLES `operation` WRITE;
+/*!40000 ALTER TABLE `operation` DISABLE KEYS */;
+INSERT INTO `operation` VALUES (1,1,0,1,NULL,'2021-01-21 16:56:20'),(3,1,12,1,2,'2021-01-21 17:24:39'),(4,2,0,1,NULL,'2021-01-21 17:39:38'),(5,2,100,1,3,'2021-01-21 17:40:37'),(6,3,0,1,NULL,'2021-01-21 17:53:39'),(7,3,20,1,4,'2021-01-21 17:55:24'),(8,4,0,1,NULL,'2021-01-22 14:44:20'),(9,4,1,1,5,'2021-01-22 14:45:00'),(10,5,0,1,NULL,'2021-01-22 14:46:59'),(12,7,0,1,NULL,'2021-01-22 14:48:17'),(15,5,1,1,8,'2021-01-22 14:50:25'),(14,7,1,1,7,'2021-01-22 14:49:20'),(16,8,0,1,NULL,'2021-01-22 14:53:23'),(17,8,2,1,9,'2021-01-22 14:54:06'),(18,9,0,1,NULL,'2021-01-22 14:56:51'),(19,9,20,1,10,'2021-01-22 14:57:27'),(20,10,0,1,NULL,'2021-01-22 14:59:19'),(21,10,2,1,11,'2021-01-22 14:59:46'),(22,11,0,1,NULL,'2021-01-22 15:00:50'),(23,11,2,1,12,'2021-01-22 15:01:20'),(24,12,0,1,NULL,'2021-01-22 15:02:04'),(25,12,2,1,13,'2021-01-22 15:02:52'),(26,13,0,1,NULL,'2021-01-22 15:30:31'),(27,13,1,1,14,'2021-01-22 15:31:09'),(28,14,0,1,NULL,'2021-01-22 15:32:37'),(29,14,6,1,15,'2021-01-22 15:33:11'),(30,15,0,1,NULL,'2021-01-22 15:33:53'),(31,15,6,1,16,'2021-01-22 15:34:25'),(32,16,0,1,NULL,'2021-01-22 15:35:13'),(33,16,2,1,17,'2021-01-22 15:35:44'),(34,17,0,1,NULL,'2021-01-22 15:37:38'),(35,17,3,1,18,'2021-01-22 15:38:11'),(36,18,0,1,NULL,'2021-01-22 15:40:07'),(37,18,1,1,19,'2021-01-22 15:40:34'),(38,19,0,1,NULL,'2021-01-22 15:41:48'),(39,19,1,1,20,'2021-01-22 15:42:13'),(40,20,0,1,NULL,'2021-01-22 15:43:08'),(41,20,1,1,21,'2021-01-22 15:43:33'),(42,21,0,1,NULL,'2021-01-22 15:44:43'),(43,21,1,1,22,'2021-01-22 15:45:32'),(44,22,0,1,NULL,'2021-01-22 15:49:26'),(45,22,4,1,23,'2021-01-22 15:50:41'),(46,23,0,1,NULL,'2021-01-22 15:53:00'),(47,23,5,1,24,'2021-01-22 15:53:38'),(48,24,0,1,NULL,'2021-01-22 16:00:29'),(49,24,2,1,25,'2021-01-22 16:01:02'),(50,25,0,1,NULL,'2021-01-22 16:04:15'),(51,25,2,1,26,'2021-01-22 16:04:44'),(52,26,0,1,NULL,'2021-01-22 16:06:15'),(53,26,2,1,27,'2021-01-22 16:06:54'),(54,27,0,1,NULL,'2021-01-22 16:09:07'),(55,27,1,1,28,'2021-01-22 16:09:31'),(56,28,0,1,NULL,'2021-01-22 16:11:00'),(57,28,1,1,29,'2021-01-22 16:11:17'),(58,29,0,1,NULL,'2021-01-22 16:12:38'),(59,29,1,1,30,'2021-01-22 16:12:59'),(60,30,0,1,NULL,'2021-01-22 16:14:33'),(61,30,6,1,31,'2021-01-22 16:15:03'),(62,21,1,1,32,'2021-01-22 16:41:08'),(63,31,0,1,NULL,'2021-01-22 16:43:31'),(64,32,0,1,NULL,'2021-01-22 16:44:06'),(65,33,0,1,NULL,'2021-01-22 16:44:55'),(66,34,0,1,NULL,'2021-01-22 16:45:27'),(67,35,0,1,NULL,'2021-01-22 16:46:00'),(68,36,0,1,NULL,'2021-01-22 16:46:28'),(69,31,2,1,33,'2021-01-22 16:50:39'),(70,32,2,1,34,'2021-01-22 16:51:04'),(71,33,2,1,35,'2021-01-22 16:51:24'),(72,34,2,1,36,'2021-01-22 16:51:51'),(73,35,2,1,37,'2021-01-22 16:52:10'),(74,36,2,1,38,'2021-01-22 16:52:31'),(75,37,0,1,NULL,'2021-01-22 16:59:20'),(76,37,5,1,39,'2021-01-22 16:59:52'),(77,38,0,1,NULL,'2021-01-22 17:00:52'),(78,39,0,1,NULL,'2021-01-22 17:01:57'),(79,40,0,1,NULL,'2021-01-22 17:03:16'),(80,38,1,1,40,'2021-01-22 17:03:51'),(81,39,1,1,41,'2021-01-22 17:04:16'),(82,40,1,1,42,'2021-01-22 17:04:41'),(83,41,0,1,NULL,'2021-01-22 17:05:37'),(84,42,0,1,NULL,'2021-01-22 17:06:11'),(85,43,0,1,NULL,'2021-01-22 17:06:42'),(86,44,0,1,NULL,'2021-01-22 17:07:15'),(87,41,1,1,43,'2021-01-22 17:07:46'),(88,42,1,1,44,'2021-01-22 17:08:12'),(89,43,1,1,45,'2021-01-22 17:08:32'),(90,44,1,1,46,'2021-01-22 17:08:49'),(91,45,0,1,NULL,'2021-01-26 18:18:49'),(92,46,0,1,NULL,'2021-01-26 18:19:45'),(93,45,3,1,47,'2021-01-26 18:20:11'),(94,46,4,1,48,'2021-01-26 18:20:39'),(95,18,1,2,49,'2021-01-26 18:21:34'),(96,1,3,2,50,'2021-01-26 18:22:13'),(97,37,1,2,51,'2021-02-02 16:00:23'),(98,47,0,1,NULL,'2021-02-02 16:03:56');
+/*!40000 ALTER TABLE `operation` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `operation_type`
+--
+
+DROP TABLE IF EXISTS `operation_type`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `operation_type` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `operation_type`
+--
+
+LOCK TABLES `operation_type` WRITE;
+/*!40000 ALTER TABLE `operation_type` DISABLE KEYS */;
+INSERT INTO `operation_type` VALUES (1,'entrada'),(2,'salida');
+/*!40000 ALTER TABLE `operation_type` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `person`
+--
+
+DROP TABLE IF EXISTS `person`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `person` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `image` varchar(255) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `lastname` varchar(50) DEFAULT NULL,
+  `company` varchar(50) DEFAULT NULL,
+  `address1` varchar(50) DEFAULT NULL,
+  `address2` varchar(50) DEFAULT NULL,
+  `phone1` varchar(50) DEFAULT NULL,
+  `phone2` varchar(50) DEFAULT NULL,
+  `email1` varchar(50) DEFAULT NULL,
+  `email2` varchar(50) DEFAULT NULL,
+  `kind` int(11) DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `person`
+--
+
+LOCK TABLES `person` WRITE;
+/*!40000 ALTER TABLE `person` DISABLE KEYS */;
+INSERT INTO `person` VALUES (1,NULL,'PUMA DORADO','ALTEZA S.A. de C.V.',NULL,'5a Avenida Norte y Pasaje Montalvo #6, Barrio El C',NULL,'2222-1811',NULL,'reyna1688@gmail.com',NULL,2,'2021-01-21 16:35:25'),(2,NULL,'COMPUACCESORIOS','COMPU ACCESORIOS S.A. DE C.V.',NULL,'Av. Olímpica, San Salvador',NULL,'2296-9700',NULL,'',NULL,2,'2021-01-21 17:44:45'),(3,NULL,'TODOTRANSFER','TODOTRANSFER S.A. DE C.V.',NULL,'47 AVENIDA NORTE LOCAL A-13 COL FLOR BLANCA',NULL,'2563-72-16',NULL,'ventas@todotransfersv.com',NULL,2,'2021-01-21 17:48:23'),(4,NULL,'MR. T-SHIRT','MERCADOS ARTESANALES S.A. DE CV',NULL,'BLVD. VENEZUELA COL. LUZ #2731, SAN SALVADOR',NULL,'2209-6400',NULL,'',NULL,2,'2021-01-22 16:49:59');
+/*!40000 ALTER TABLE `person` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `product`
+--
+
+DROP TABLE IF EXISTS `product`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `product` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `image` varchar(255) DEFAULT NULL,
+  `barcode` varchar(50) DEFAULT NULL,
+  `name` varchar(50) DEFAULT NULL,
+  `description` text,
+  `inventary_min` int(11) DEFAULT '10',
+  `price_in` float DEFAULT NULL,
+  `price_out` float DEFAULT NULL,
+  `unit` varchar(255) DEFAULT NULL,
+  `presentation` varchar(255) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `category_id` int(11) DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `is_active` tinyint(1) DEFAULT '1',
+  PRIMARY KEY (`id`),
+  KEY `category_id` (`category_id`),
+  KEY `user_id` (`user_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=48 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `product`
+--
+
+LOCK TABLES `product` WRITE;
+/*!40000 ALTER TABLE `product` DISABLE KEYS */;
+INSERT INTO `product` VALUES (1,NULL,'1','MOUSE PAD','Mouse Pad para sublimación',3,0.9,5,'PIEZA','',1,1,'2021-01-21 16:56:20',1),(2,NULL,'2','LLAVERO REDONDO ACRILICO','Llavero redondo',3,0.135,1.25,'PIEZA','',1,1,'2021-01-21 17:39:38',1),(3,NULL,'3','CARNET 86X54X0.76MM','CARNET PARA SUBLIMAR',3,0.239,2,'PIEZA','',1,1,'2021-01-21 17:53:39',1),(4,NULL,'4','COPA COCTAIL ROSA','COPA DE COCTAIL ROSA PARA SUBLIMAR',1,11.5,18,'PIEZA','',1,1,'2021-01-22 14:44:20',1),(5,NULL,'5','JARRA TARRO CERVECERA AZUL','TARRO CERVECERO AZUL PARA SUBLIMAR',1,4.42,15,'PIEZA','',1,1,'2021-01-22 14:46:59',1),(7,NULL,'6','JARRA TARRO CERVECERA ROJO','TARRO CERVECERO ROJO',1,4.42,15,'PIEZA','',1,1,'2021-01-22 14:48:17',1),(8,NULL,'7','STAND PARA CELULAR','STAND PARA CELULAR Y SUBLIMAR',1,2.65,4.5,'PIEZA','',1,1,'2021-01-22 14:53:23',1),(9,NULL,'8','PLACA DE ALUMINIO BLANCA OVALADA 35X55MM SIN CADEN','PLACA PARA SUBLIMAR',5,1.212,4,'PIEZA','',1,1,'2021-01-22 14:56:51',1),(10,NULL,'9','MEDALLA DORADA 65X65MM PARA SUBLIMAR','MEDALLA PARA SUBLIMAR',1,1.77,3.5,'PIEZA','',1,1,'2021-01-22 14:59:19',1),(11,NULL,'10','CUADRO MDF FAMILY','CUADRO PARA SUBLIMAR',1,3.19,8,'PIEZA','',1,1,'2021-01-22 15:00:49',1),(12,NULL,'11','CUADRO MDF LOVE','CUADRO MDF PARA SUBLIMAR',1,3.19,8,'PIEZA','',1,1,'2021-01-22 15:02:04',1),(13,NULL,'12','PLATO DE CERAMICA 8 PULGADAS','PLATO PARA SUBLIMAR',1,2.65,6,'PIEZA','',1,1,'2021-01-22 15:30:31',1),(14,NULL,'13','LLAVERO CON TIRAS DE CUERO CON CENTRO CUADRADO','LLAVERO PARA SUBLIMAR',3,2.21,6,'PIEZA','',1,1,'2021-01-22 15:32:37',1),(15,NULL,'14','LLAVERO CON TIRAS DE CUERO CON CENTRO REDONDO','LLAVERO PARA SUBLIMAR',3,2.21,6,'PIEZA','',1,1,'2021-01-22 15:33:53',1),(16,NULL,'15','LLAVERO CON TIRAS DE CUERO CON CENTRO OVALO','LLAVERO PARA SUBLIMAR',1,2.21,6,'PIEZA','',1,1,'2021-01-22 15:35:13',1),(17,NULL,'16','ROMPECABEZAS DE CARTON A4','ROMPECABEZAS PARA SUBLIMAR',2,0.88,3.5,'PIEZA','',1,1,'2021-01-22 15:37:38',1),(18,NULL,'17','TAZA TIPO ESPEJO GOLD ROSE','TAZA PARA SUBLIMAR',1,1.99,9,'PIEZA','',1,1,'2021-01-22 15:40:07',1),(19,NULL,'18','TAZA TIPO ESPEJO DESTELLO VERDE AZUL','TAZA PARA SUBLIMAR',1,1.99,9,'PIEZA','',1,1,'2021-01-22 15:41:48',1),(20,NULL,'19','TAZA TIPO ESPEJO PLATA OSCURO','TAZA PARA SUBLIMCAR',1,1.99,9,'PIEZA','',1,1,'2021-01-22 15:43:08',1),(21,NULL,'20','ALCANCIA SUBLIMABLE','ALCANCIA PARA SUBLIMAR',1,1.77,5,'PIEZA','',1,1,'2021-01-22 15:44:43',1),(22,NULL,'21','JARRA CERVECERA 16 OZ','JARRA PARA SUBLIMAR',1,8,15,'PIEZA','',1,1,'2021-01-22 15:49:26',1),(23,NULL,'22','DELANTAL','DELANTAL PARA SUBLIMAR',2,1.33,5,'PIEZA','',1,1,'2021-01-22 15:53:00',1),(24,NULL,'23','DESTAPADOR DE ACERO ACERO INOXIDABLE 17.7X3.9CM','DESTAPADOR SUBLIMACION',1,1.77,4,'PIEZA','',1,1,'2021-01-22 16:00:29',1),(25,NULL,'24','DESTAPADOR FORMA DE BOTELLA ACERO ACERO INOXIDABLE','DESTAPADOR SUBLIMACION',1,1.77,4,'PIEZA','',1,1,'2021-01-22 16:04:15',1),(26,NULL,'25','DESTAPADOR FORMA DE JARRA ACERO ACERO INOXIDABLE','DESTAPADOR SUBLIMACION',1,0.88,3,'PIEZA','',1,1,'2021-01-22 16:06:15',1),(27,NULL,'26','LAMINA DE ALUMINIO BLANCA ESCARCHADA 20X30CM','LAMINA PARA SUBLIMAR',1,1.33,4.5,'PIEZA','',1,1,'2021-01-22 16:09:07',1),(28,NULL,'27','LAMINA DE ALUMINIO BLANCA ESCARCHADA 40X60CM','LAMINA PARA SUBLIMAR',1,7.08,15,'PIEZA','',1,1,'2021-01-22 16:11:00',1),(29,NULL,'28','LAMINA DE ALUMINIO DORADA 40X60CM','LAMINA DORADA SUBLIMAR',1,7.08,15,'PIEZA','',1,1,'2021-01-22 16:12:38',1),(30,NULL,'29','LLAVERO METALICO SUBLIMABLE CON CORREA DE TELA','LLAVERO SUBLIMAR',3,2.21,6,'PIEZA','',1,1,'2021-01-22 16:14:33',1),(31,NULL,'30','CAMISA CUELLO REDONDO BLANCA XS','',1,2.09,5,'PIEZA','',1,2,'2021-01-22 16:43:31',1),(32,NULL,'31','CAMISA CUELLO REDONDO BLANCA S','',1,2.09,5,'PIEZA','',1,2,'2021-01-22 16:44:06',1),(33,NULL,'32','CAMISA CUELLO REDONDO BLANCA M','',1,2.09,5,'PIEZA','',1,2,'2021-01-22 16:44:55',1),(34,NULL,'33','CAMISA CUELLO REDONDO BLANCA L','',1,2.09,5,'PIEZA','',1,2,'2021-01-22 16:45:27',1),(35,NULL,'34','CAMISA CUELLO REDONDO BLANCA XL','',1,2.09,5,'PIEZA','',1,2,'2021-01-22 16:46:00',1),(36,NULL,'35','CAMISA CUELLO REDONDO BLANCA XXL','',1,2.09,5,'PIEZA','',1,2,'2021-01-22 16:46:28',1),(37,NULL,'36','CAMISA CUELLO REDONDO NEGRO S','',1,2.26,5,'PIEZA','',1,2,'2021-01-22 16:59:20',1),(38,NULL,'37','CAMISA CUELLO REDONDO ROJO S','',1,2.26,5,'PIEZA','',1,2,'2021-01-22 17:00:52',1),(39,NULL,'38','CAMISA CUELLO REDONDO ROJO M','',1,2.26,5,'PIEZA','',1,2,'2021-01-22 17:01:57',1),(40,NULL,'39','CAMISA CUELLO REDONDO ROJO L','',1,2.26,5,'PIEZA','',1,2,'2021-01-22 17:03:16',1),(41,NULL,'40','CAMISA CUELLO REDONDO AZUL NAVY XS','',1,2.26,5,'PIEZA','',1,2,'2021-01-22 17:05:37',1),(42,NULL,'41','CAMISA CUELLO REDONDO AZUL NAVY M','',1,2.26,5,'PIEZA','',1,2,'2021-01-22 17:06:11',1),(43,NULL,'42','CAMISA CUELLO REDONDO AZUL NAVY L','',1,2.26,5,'PIEZA','',1,2,'2021-01-22 17:06:42',1),(44,NULL,'43','CAMISA CUELLO REDONDO AZUL NAVY S','',1,2.26,5,'PIEZA','',1,2,'2021-01-22 17:07:15',1),(45,NULL,'31','BALDOSAS DE CERAMICA 6X6 PULGADAS','BALDOSAS PARA SUBLIMAR',1,1.11,5,'PIEZA','',1,1,'2021-01-26 18:18:49',1),(46,NULL,'32','LATA DE ACERO DOBLE PARED SILVER 500ML','LATA PARA SUBLIMAR',1,5.75,15,'PIEZA','',1,1,'2021-01-26 18:19:45',1),(47,NULL,'','Camisa Talla M negra algodón cuello redondo ','',2,0,5,'5','',1,2,'2021-02-02 16:03:56',1);
+/*!40000 ALTER TABLE `product` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `sell`
+--
+
+DROP TABLE IF EXISTS `sell`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `sell` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `person_id` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `operation_type_id` int(11) DEFAULT '2',
+  `box_id` int(11) DEFAULT NULL,
+  `total` double DEFAULT NULL,
+  `cash` double DEFAULT NULL,
+  `discount` double DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `box_id` (`box_id`),
+  KEY `operation_type_id` (`operation_type_id`),
+  KEY `user_id` (`user_id`),
+  KEY `person_id` (`person_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=52 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `sell`
+--
+
+LOCK TABLES `sell` WRITE;
+/*!40000 ALTER TABLE `sell` DISABLE KEYS */;
+INSERT INTO `sell` VALUES (2,NULL,1,1,NULL,NULL,NULL,NULL,'2021-01-21 17:24:39'),(3,1,1,1,NULL,NULL,NULL,NULL,'2021-01-21 17:40:37'),(4,2,1,1,NULL,NULL,NULL,NULL,'2021-01-21 17:55:24'),(5,2,1,1,NULL,NULL,NULL,NULL,'2021-01-22 14:45:00'),(8,2,1,1,NULL,NULL,NULL,NULL,'2021-01-22 14:50:25'),(7,2,1,1,NULL,NULL,NULL,NULL,'2021-01-22 14:49:20'),(9,2,1,1,NULL,NULL,NULL,NULL,'2021-01-22 14:54:06'),(10,2,1,1,NULL,NULL,NULL,NULL,'2021-01-22 14:57:27'),(11,2,1,1,NULL,NULL,NULL,NULL,'2021-01-22 14:59:46'),(12,2,1,1,NULL,NULL,NULL,NULL,'2021-01-22 15:01:20'),(13,2,1,1,NULL,NULL,NULL,NULL,'2021-01-22 15:02:52'),(14,3,1,1,NULL,NULL,NULL,NULL,'2021-01-22 15:31:09'),(15,3,1,1,NULL,NULL,NULL,NULL,'2021-01-22 15:33:11'),(16,3,1,1,NULL,NULL,NULL,NULL,'2021-01-22 15:34:25'),(17,3,1,1,NULL,NULL,NULL,NULL,'2021-01-22 15:35:44'),(18,3,1,1,NULL,NULL,NULL,NULL,'2021-01-22 15:38:11'),(19,3,1,1,NULL,NULL,NULL,NULL,'2021-01-22 15:40:34'),(20,3,1,1,NULL,NULL,NULL,NULL,'2021-01-22 15:42:13'),(21,3,1,1,NULL,NULL,NULL,NULL,'2021-01-22 15:43:33'),(22,3,1,1,NULL,NULL,NULL,NULL,'2021-01-22 15:45:32'),(23,3,1,1,NULL,NULL,NULL,NULL,'2021-01-22 15:50:41'),(24,3,1,1,NULL,NULL,NULL,NULL,'2021-01-22 15:53:38'),(25,3,1,1,NULL,NULL,NULL,NULL,'2021-01-22 16:01:02'),(26,3,1,1,NULL,NULL,NULL,NULL,'2021-01-22 16:04:44'),(27,3,1,1,NULL,NULL,NULL,NULL,'2021-01-22 16:06:54'),(28,3,1,1,NULL,NULL,NULL,NULL,'2021-01-22 16:09:31'),(29,3,1,1,NULL,NULL,NULL,NULL,'2021-01-22 16:11:17'),(30,3,1,1,NULL,NULL,NULL,NULL,'2021-01-22 16:12:59'),(31,3,1,1,NULL,NULL,NULL,NULL,'2021-01-22 16:15:03'),(32,3,1,1,NULL,NULL,NULL,NULL,'2021-01-22 16:41:08'),(33,4,1,1,NULL,NULL,NULL,NULL,'2021-01-22 16:50:39'),(34,4,1,1,NULL,NULL,NULL,NULL,'2021-01-22 16:51:04'),(35,4,1,1,NULL,NULL,NULL,NULL,'2021-01-22 16:51:24'),(36,4,1,1,NULL,NULL,NULL,NULL,'2021-01-22 16:51:51'),(37,4,1,1,NULL,NULL,NULL,NULL,'2021-01-22 16:52:10'),(38,4,1,1,NULL,NULL,NULL,NULL,'2021-01-22 16:52:31'),(39,4,1,1,NULL,NULL,NULL,NULL,'2021-01-22 16:59:52'),(40,4,1,1,NULL,NULL,NULL,NULL,'2021-01-22 17:03:51'),(41,4,1,1,NULL,NULL,NULL,NULL,'2021-01-22 17:04:16'),(42,4,1,1,NULL,NULL,NULL,NULL,'2021-01-22 17:04:41'),(43,4,1,1,NULL,NULL,NULL,NULL,'2021-01-22 17:07:46'),(44,4,1,1,NULL,NULL,NULL,NULL,'2021-01-22 17:08:12'),(45,4,1,1,NULL,NULL,NULL,NULL,'2021-01-22 17:08:32'),(46,4,1,1,NULL,NULL,NULL,NULL,'2021-01-22 17:08:49'),(47,3,1,1,NULL,NULL,NULL,NULL,'2021-01-26 18:20:11'),(48,3,1,1,NULL,NULL,NULL,NULL,'2021-01-26 18:20:39'),(49,NULL,1,2,NULL,9,NULL,0,'2021-01-26 18:21:34'),(50,NULL,1,2,NULL,15,NULL,0,'2021-01-26 18:22:13'),(51,NULL,1,2,NULL,5,NULL,0,'2021-02-02 16:00:23');
+/*!40000 ALTER TABLE `sell` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `user`
+--
+
+DROP TABLE IF EXISTS `user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) DEFAULT NULL,
+  `lastname` varchar(50) DEFAULT NULL,
+  `username` varchar(50) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `password` varchar(60) DEFAULT NULL,
+  `image` varchar(255) DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `is_admin` tinyint(1) NOT NULL DEFAULT '0',
+  `created_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `user`
+--
+
+LOCK TABLES `user` WRITE;
+/*!40000 ALTER TABLE `user` DISABLE KEYS */;
+INSERT INTO `user` VALUES (1,'Administrador','Admin','admin','admin','32dd54b522a998593211398f4a62b46646ed231f',NULL,1,1,'2021-01-21 16:11:30');
+/*!40000 ALTER TABLE `user` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Dumping routines for database 'swasp_stocklite'
+--
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2021-02-08  8:29:04
